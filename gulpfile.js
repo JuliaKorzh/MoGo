@@ -14,32 +14,6 @@ const svgSprite = require('gulp-svg-sprite');
 const fonter = require('gulp-fonter');
 const ttf2woff2 = require('gulp-ttf2woff2');
 
-/* 
-
-Помещаем index.html  в папку pages. В  index.html вначале пишем include header.html include footer.html....  Создаем попку components, внутри создаем footer.html header.html  итд
-
-const include = require('gulp-include');
-
-
-function pages() {                                                      //  соединяте воедино html компоненты.  index.html должен находиться в папке  pages. Другие компоненты в папке компоненты
-   return src('app/pages/*.html')                                          //
-   .pipe(include({
-      includePaths: 'app/components'
-   }))
-   .pipe(dest('app'))
-   .pipe(browserSync.stream()) 
-}
-
-
-exports.pages = pages
-
-
-watch(['app/*.html']).on('change', browserSync.reload) 
-watch(['app/components/*', 'app/pages/*']), pages) 
-
-
-
-*/
 
 function fonts(){
    return src('app/fonts/src/*.*')
@@ -52,7 +26,7 @@ function fonts(){
 }
 
 function images () {
-   return src(['app/images/src/*.*', '!app/images/src/*.svg'])
+   return src(['app/images/src/**/*.*', '!app/images/src/**/*.svg'])
       .pipe(newer('app/images/dist'))                                  //проверяет какие картинки уже конвертировались чтобы не повторяться и не нугружать память
       .pipe(avif({quality: 50}))
 
@@ -80,8 +54,14 @@ function sprite(){
       .pipe(dest('app/images/dist'))
 }
 
-function scripts(){
-   return src('app/js/main.js')                                   // чтобф подключить большое число js фаилов Можно писать так 'app/js/*.js', '!app/js/main.min.js'
+function scripts(){ 
+   return src(
+      [  'node_modules/jquery/dist/jquery.js',
+         'node_modules/slick-carousel/slick/slick.js',
+         'node_modules/mixitup/dist/mixitup.js',
+         'node_modules/@fancyapps/ui/dist/fancybox/fancybox.umd.js',
+         'app/js/main.js']
+      )                                   // чтобф подключить большое число js фаилов Можно писать так 'app/js/*.js', '!app/js/main.min.js'
    .pipe(concat('main.min.js'))
    .pipe(uglify())
    .pipe(dest('app/js'))
